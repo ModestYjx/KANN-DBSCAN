@@ -5,7 +5,7 @@ from sklearn.cluster import DBSCAN
 import matplotlib.pyplot as plt
 
 
-def loadDataSet(fileName, splitChar='\t'):
+def loadDataSet(fileName, splitChar='\t', i=1):
     """
     输入：文件名
     输出：数据集
@@ -13,24 +13,26 @@ def loadDataSet(fileName, splitChar='\t'):
     """
     dataSet = []
     with open(fileName) as fr:
-        for line in fr.readlines():
+        for m, line in enumerate(fr.readlines()):
+            if (m > 500 * i):
+                return dataSet
             curline = line.strip().split(splitChar)
             fltline = list(map(float, curline))
             dataSet.append(fltline)
     return dataSet
 
 
-def dist(a,b):
+def dist(a, b):
     """
     用来计算两个样本点之间的距离
     :param a: 样本点
     :param b: 样本点
     :return: 两个样本点之间的距离
     """
-    return math.sqrt(math.pow(a[0]-b[0],2) + math.pow(a[1]-b[1],2))
+    return math.sqrt(math.pow(a[0] - b[0], 2) + math.pow(a[1] - b[1], 2))
 
 
-def returnDk(matrix,k):
+def returnDk(matrix, k):
     """
     用来计算第K最近的距离集合
     :param matrix: 距离矩阵
@@ -52,7 +54,7 @@ def returnDkAverage(Dk):
     sum = 0
     for i in range(len(Dk)):
         sum = sum + Dk[i]
-    return sum/len(Dk)
+    return sum / len(Dk)
 
 
 def CalculateDistMatrix(dataset):
@@ -62,9 +64,10 @@ def CalculateDistMatrix(dataset):
     :return: 距离矩阵
     """
     DistMatrix = [[0 for j in range(len(dataset))] for i in range(len(dataset))]
-    for i in range(len(dataset)):
-        for j in range(len(dataset)):
-            DistMatrix[i][j] = dist(dataset[i], dataset[j])
+    # for m in range(1, batch):
+    #     for i in range(len(dataset)):
+    #         for j in range(len(dataset)):
+    #             DistMatrix[i][j] = dist(dataset[i], dataset[j])
     return DistMatrix
 
 
@@ -79,14 +82,14 @@ def returnEpsCandidate(dataSet):
     for i in range(len(tmp_matrix)):
         tmp_matrix[i].sort()
     EpsCandidate = []
-    for k in range(1,len(dataSet)):
-        Dk = returnDk(tmp_matrix,k)
+    for k in range(1, len(dataSet)):
+        Dk = returnDk(tmp_matrix, k)
         DkAverage = returnDkAverage(Dk)
         EpsCandidate.append(DkAverage)
     return EpsCandidate
 
 
-def returnMinptsCandidate(DistMatrix,EpsCandidate):
+def returnMinptsCandidate(DistMatrix, EpsCandidate):
     """
     计算Minpts候选列表
     :param DistMatrix: 距离矩阵
@@ -101,11 +104,11 @@ def returnMinptsCandidate(DistMatrix,EpsCandidate):
             for j in range(len(DistMatrix[i])):
                 if DistMatrix[i][j] <= tmp_eps:
                     tmp_count = tmp_count + 1
-        MinptsCandidate.append(tmp_count/len(dataSet))
+        MinptsCandidate.append(tmp_count / len(dataSet))
     return MinptsCandidate
 
 
-def returnClusterNumberList(dataset,EpsCandidate,MinptsCandidate):
+def returnClusterNumberList(dataset, EpsCandidate, MinptsCandidate):
     """
     计算聚类后的类别数目
     :param dataset: 数据集
@@ -113,11 +116,11 @@ def returnClusterNumberList(dataset,EpsCandidate,MinptsCandidate):
     :param MinptsCandidate: Minpts候选列表
     :return: 聚类数量列表
     """
-    np_dataset = np.array(dataset)  #将dataset转换成numpy_array的形式
+    np_dataset = np.array(dataset)  # 将dataset转换成numpy_array的形式
     ClusterNumberList = []
     clusteringlabels_List = []
     for i in range(len(EpsCandidate)):
-        clustering = DBSCAN(eps= EpsCandidate[i],min_samples= MinptsCandidate[i]).fit(np_dataset)
+        clustering = DBSCAN(eps=EpsCandidate[i], min_samples=MinptsCandidate[i]).fit(np_dataset)
         num_clustering = max(clustering.labels_)
 
         clusteringlabels_List.append(clustering.labels_)
@@ -128,20 +131,28 @@ def returnClusterNumberList(dataset,EpsCandidate,MinptsCandidate):
     # print(clusteringlabels_List)
     return ClusterNumberList
 
+
 if __name__ == '__main__':
-    dataSet = loadDataSet('scale_h_w_or.txt', splitChar=',')
+    # batch = 200
+    # for i in range(1, batch):
+    #     dataSet = loadDataSet('./data/data7122/scale_h_w_or.txt', splitChar=',', i = i)
+    #     EpsCandidate = returnEpsCandidate(dataSet)
+    #     DistMatrix = CalculateDistMatrix(dataSet)
+    #     MinptsCandidate = returnMinptsCandidate(DistMatrix, EpsCandidate)
+    #     ClusterNumberList = returnClusterNumberList(dataSet, EpsCandidate, MinptsCandidate)
+    #     print(ClusterNumberList)
+    #     for j, num in enumerate(ClusterNumberList):
+    #         if (num >= 4):
+    #             plt.plot(j, num, 'or', markersize=3)
+
+    dataSet = loadDataSet('./data/data7122/scale_h_w_or.txt', splitChar=',', i=i)
     EpsCandidate = returnEpsCandidate(dataSet)
     DistMatrix = CalculateDistMatrix(dataSet)
-    MinptsCandidate = returnMinptsCandidate(DistMatrix,EpsCandidate)
-    ClusterNumberList = returnClusterNumberList(dataSet,EpsCandidate,MinptsCandidate)
+    MinptsCandidate = returnMinptsCandidate(DistMatrix, EpsCandidate)
+    ClusterNumberList = returnClusterNumberList(dataSet, EpsCandidate, MinptsCandidate)
     print(ClusterNumberList)
-    for i, num in enumerate(ClusterNumberList):
+    for j, num in enumerate(ClusterNumberList):
         if (num >= 4):
-            plt.plot(i, num, 'or', markersize=3)
+            plt.plot(j, num, 'or', markersize=3)
+
     plt.show()
-    # print("EpsCandidate:")
-    # print(EpsCandidate)
-    # print("MinptsCandidate:")
-    # print(MinptsCandidate)
-    # print('cluster number list is')
-    # print(ClusterNumberList)
