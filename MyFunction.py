@@ -2,6 +2,7 @@ import math
 import copy
 import numpy as np
 from sklearn.cluster import DBSCAN
+import matplotlib.pyplot as plt
 
 
 def loadDataSet(fileName, splitChar='\t'):
@@ -106,7 +107,7 @@ def returnMinptsCandidate(DistMatrix,EpsCandidate):
 
 def returnClusterNumberList(dataset,EpsCandidate,MinptsCandidate):
     """
-    计算聚类后的类别数目 
+    计算聚类后的类别数目
     :param dataset: 数据集
     :param EpsCandidate: Eps候选列表
     :param MinptsCandidate: Minpts候选列表
@@ -123,16 +124,21 @@ def returnClusterNumberList(dataset,EpsCandidate,MinptsCandidate):
         ClusterNumberList.append(num_clustering)
 
     #
-    print("clusteringlabels_List:")
-    print(clusteringlabels_List)
+    # print("clusteringlabels_List:")
+    # print(clusteringlabels_List)
     return ClusterNumberList
 
 if __name__ == '__main__':
-    dataSet = loadDataSet('788points.txt', splitChar=',')
+    dataSet = loadDataSet('scale_h_w_or.txt', splitChar=',')
     EpsCandidate = returnEpsCandidate(dataSet)
     DistMatrix = CalculateDistMatrix(dataSet)
     MinptsCandidate = returnMinptsCandidate(DistMatrix,EpsCandidate)
     ClusterNumberList = returnClusterNumberList(dataSet,EpsCandidate,MinptsCandidate)
+    print(ClusterNumberList)
+    for i, num in enumerate(ClusterNumberList):
+        if (num >= 4):
+            plt.plot(i, num, 'or', markersize=3)
+    plt.show()
     # print("EpsCandidate:")
     # print(EpsCandidate)
     # print("MinptsCandidate:")
