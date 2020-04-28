@@ -131,4 +131,7 @@ if __name__ == '__main__':
     dataSet = loadDataSet('coco_train_area.txt', splitChar='\n')
     dataSet = np.array(dataSet)
     print(dataSet)
-    DistMatrix = CalculateDistMatrix(dataSet)
+    # DistMatrix = CalculateDistMatrix(dataSet)
+    for j, num in enumerate(dataSet):
+            plt.plot(j, num, 'or', markersize=1)
+    plt.show()

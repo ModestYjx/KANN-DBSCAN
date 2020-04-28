@@ -13,6 +13,7 @@ mark = ['or', 'ob', 'og', 'ok', '^r', '+r', 'sr', 'dr', '<r', 'pr']
 #这里'or'代表中的'o'代表画圈，'r'代表颜色为红色，后面的依次类推
 color = 0
 j = 0
+
 for i in label_pred:
     plt.plot([data[j:j+1,0]], [data[j:j+1,1]], mark[i], markersize = 5)
     j +=1
