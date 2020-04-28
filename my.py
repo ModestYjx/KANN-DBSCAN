@@ -18,7 +18,6 @@ def loadDataSet(fileName, splitChar='\t'):
             curline = line.strip().split(splitChar)
             fltline = list(map(float, curline))
             dataSet.append(fltline)
-    # print(dataSet)
     return dataSet
 
 
@@ -124,9 +123,6 @@ def returnClusterNumberList(dataset, EpsCandidate, MinptsCandidate):
 
         clusteringlabels_List.append(clustering.labels_)
         ClusterNumberList.append(num_clustering)
-
-    # print("clusteringlabels_List:")
-    # print(clusteringlabels_List)
     return ClusterNumberList
 
 
@@ -136,16 +132,8 @@ if __name__ == '__main__':
     DistMatrix = CalculateDistMatrix(dataSet)
     MinptsCandidate = returnMinptsCandidate(DistMatrix, EpsCandidate)
     ClusterNumberList = returnClusterNumberList(dataSet, EpsCandidate, MinptsCandidate)
-    # print("EpsCandidate:")
-    # print(EpsCandidate)
-    # print("MinptsCandidate:")
-    # print(MinptsCandidate)
-    # print('cluster number list is')
-    # print(ClusterNumberList)
 
     dataSet = np.array(dataSet)
-    # print(dataSet[:, 0])
-    # print(dataSet[:, 1])
 
     num = len(dataSet)
     plt.scatter(dataSet[:, 0], dataSet[:, 1], marker='o')

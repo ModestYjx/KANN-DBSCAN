@@ -56,35 +56,6 @@ def returnDkAverage(Dk):
         sum = sum + Dk[i]
     return sum / len(Dk)
 
-
-import numpy as np
-
-def batch_generator(all_data , batch_size, shuffle=True):
-    """
-    :param all_data : all_data整个数据集
-    :param batch_size: batch_size表示每个batch的大小
-    :param shuffle: 每次是否打乱顺序
-    :return:
-    """
-    all_data = [np.array(d) for d in all_data]
-    data_size = all_data[0].shape[0]
-    print("data_size: ", data_size)
-    if shuffle:
-        p = np.random.permutation(data_size)
-        all_data = [d[p] for d in all_data]
-
-    batch_count = 0
-    while True:
-        if batch_count * batch_size + batch_size > data_size:
-            batch_count = 0
-            if shuffle:
-                p = np.random.permutation(data_size)
-                all_data = [d[p] for d in all_data]
-        start = batch_count * batch_size
-        end = start + batch_size
-        batch_count += 1
-        yield [d[start: end] for d in all_data]
-
 def CalculateDistMatrix(dataset):
     """
     计算距离矩阵
@@ -152,41 +123,12 @@ def returnClusterNumberList(dataset, EpsCandidate, MinptsCandidate):
 
         clusteringlabels_List.append(clustering.labels_)
         ClusterNumberList.append(num_clustering)
-
-    #
-    # print("clusteringlabels_List:")
-    # print(clusteringlabels_List)
     return ClusterNumberList
 
 
 if __name__ == '__main__':
-    # batch = 200
-    # for i in range(1, batch):
-    #     dataSet = loadDataSet('./data/data7122/scale_h_w_or.txt', splitChar=',', i = i)
-    #     EpsCandidate = returnEpsCandidate(dataSet)
-    #     DistMatrix = CalculateDistMatrix(dataSet)
-    #     MinptsCandidate = returnMinptsCandidate(DistMatrix, EpsCandidate)
-    #     ClusterNumberList = returnClusterNumberList(dataSet, EpsCandidate, MinptsCandidate)
-    #     print(ClusterNumberList)
-    #     for j, num in enumerate(ClusterNumberList):
-    #         if (num >= 4):
-    #             plt.plot(j, num, 'or', markersize=3)
 
     dataSet = loadDataSet('coco_train_area.txt', splitChar='\n')
     dataSet = np.array(dataSet)
     print(dataSet)
-    # for i, coor in enumerate(dataSet):
-    #     area[i] = coor[0]*coor[1]
-    # print(area)
-    # print(dataSet)
-    # print(len(area))
-    # print(dataSet)
-    # EpsCandidate = returnEpsCandidate(dataSet)
     DistMatrix = CalculateDistMatrix(dataSet)
-    # print(DistMatrix)
-    # MinptsCandidate = returnMinptsCandidate(DistMatrix, EpsCandidate)
-    # ClusterNumberList = returnClusterNumberList(dataSet, EpsCandidate, MinptsCandidate)
-    # print(ClusterNumberList)
-    # for j, num in enumerate(area):
-    #         plt.plot(j, num, 'or', markersize=3)
-    # plt.show()
